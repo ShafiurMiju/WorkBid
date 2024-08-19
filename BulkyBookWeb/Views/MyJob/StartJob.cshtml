@@ -1,0 +1,90 @@
+﻿@model WorkBid.Models.Job
+
+@{
+    ViewData["Title"] = "Complete Job";
+    var randomStrings = ViewBag.RandomStrings as List<string>;
+}
+
+<div style="max-width: 600px; margin: auto; padding: 20px; border: 1px solid #ddd; border-radius: 8px; margin-top: 30px;">
+    <div style="text-align: center; padding: 20px 0;">
+        <h3 class="text-primary">@Model.JobTitle</h3>
+        <p>@Model.JobDescription</p>
+        <p><span class="text-warning">গুরুত্বপূর্ণ নোট:</span> কাজ চলাকালীন পেজ রিফ্রেশ করবেন না। রিফ্রেশ করলে কাজ নতুন করে শুরু হবে।</p>
+    </div>
+
+    <form id="verification-form" method="post" asp-action="CompleteJob" asp-controller="MyJob">
+        @for (int i = 0; i < randomStrings.Count; i++)
+        {
+            <div style="margin-bottom: 20px;">
+                <div style="display: flex; align-items: center;">
+                    <div>
+                        <img src="@Url.Action("GenerateCaptcha", "Captcha", new { text = randomStrings[i] })"
+                             alt="Captcha Image" style="border: 1px solid #ddd; border-radius: 5px; padding: 5px; width: 150px; height: auto;" />
+                    </div>
+                    <div style="flex: 2; margin-left: 10px;">
+                        <input type="text" id="input-@i" class="form-control" style="width: 100%; padding: 10px; border: 2px solid #ccc; border-radius: 4px;"
+                               placeholder="Enter the text" data-random="@randomStrings[i]" />
+                    </div>
+                </div>
+
+                <div style="text-align: center; margin-top: 5px;">
+                    <span id="message-@i" style="font-weight: bold;"></span>
+                </div>
+
+                <div style="text-align: center; margin-top: 10px;">
+                    <button type="button" onclick="verifyInput(@i)"
+                            style="width: 100%; padding: 10px 20px; background-color: #28a745; color: white; border: none; border-radius: 4px;">
+                        Verify
+                    </button>
+                </div>
+            </div>
+        }
+        <input type="hidden" name="jobId" value="@Model.Id" />
+        <input type="hidden" id="completed" name="completed" value="false" />
+        <div style="text-align: center; margin-top: 30px;">
+            <button type="submit" id="complete-task-btn" style="padding: 10px 30px; background-color: #007bff; color: white; border: none; border-radius: 4px;" disabled>Complete Task</button>
+        </div>
+    </form>
+</div>
+
+@section Scripts {
+    <script>
+        function verifyInput(index) {
+            var userInput = document.getElementById(`input-${index}`).value;
+            var randomString = document.getElementById(`input-${index}`).getAttribute('data-random');
+            var message = document.getElementById(`message-${index}`);
+            var inputElement = document.getElementById(`input-${index}`);
+            var buttonElement = document.querySelector(`#verification-form button[onclick='verifyInput(${index})']`);
+
+            if (userInput === randomString) {
+                message.style.color = "green";
+                inputElement.style.borderColor = "green";
+                inputElement.disabled = true;
+                buttonElement.disabled = true;
+                document.getElementById(`input-${index}`).setAttribute('data-verified', 'true');
+            } else {
+                message.style.color = "red";
+                inputElement.style.borderColor = "red";
+                inputElement.focus();
+                document.getElementById(`input-${index}`).setAttribute('data-verified', 'false');
+            }
+
+            checkCompletion();
+        }
+
+        function checkCompletion() {
+            var allVerified = true;
+            for (var i = 0; i < @Model.JobQuantity; i++) {
+                if (document.getElementById(`input-${i}`).getAttribute('data-verified') !== 'true') {
+                    allVerified = false;
+                    break;
+                }
+            }
+
+            if (allVerified) {
+                document.getElementById("complete-task-btn").disabled = false;
+                document.getElementById("completed").value = "true";
+            }
+        }
+    </script>
+}

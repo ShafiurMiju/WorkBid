@@ -1,0 +1,65 @@
+﻿@using WorkBid.Models
+@model IEnumerable<Job>
+
+@{
+    Layout = "~/Views/Shared/_layoutAdmin.cshtml";
+    ViewData["Title"] = "All Job";
+
+}
+
+<div>
+    <div class="row pt-4 pb-2">
+        <div class="col-6">
+            <h2 class="text-primary">Category</h2>
+        </div>
+        <div class="col-6 text-end">
+            <a asp-controller="Admin" asp-action="CreateJob" class="btn btn-primary"><i class="bi bi-plus-circle"></i> &nbsp; Create New</a>
+        </div>
+    </div>
+</div>
+
+<table class="table table-bordered table table-striped" style="width:100%">
+    <thead>
+        <tr>
+            <th>Id</th>
+            <th>Job Title</th>
+            <th>Job Description</th>
+            <th>Bidder</th>
+            <th>Price</th>
+            <th>Complete</th>
+            <th>Winner</th>
+            <th>Action</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var obj in Model)
+        {
+            <tr>
+                <td width="5%">@obj.Id</td>
+                <td width="20%">@obj.JobTitle</td>
+                <td width="40%">@obj.JobDescription</td>
+                <td width="5%">@obj.Bidder</td>
+                <td width="5%">@obj.Price</td>
+                <td width="5%">@obj.IsCompleted</td>
+                <td width="5%">@obj.wId</td>
+                @* <td>
+                    <div class="w-75 btn-group" role="group">
+                        <a class="btn btn-primary mr-2" asp-controller="Category" asp-action="Edit" asp-route-id="@obj.Id"><i class="bi bi-pencil-square"></i></a>
+                        <a class="btn btn-danger" asp-controller="Category" asp-action="Delete" asp-route-id="@obj.Id"><i class="bi bi-trash3"></i></a>
+                    </div>
+                </td> *@
+                <td>
+                    <div class="w-75 btn-group" role="group">
+                        @if(obj.wId==null){
+                            <a class="btn btn-primary mr-2" asp-controller="Admin" asp-action="SelectWinner" asp-route-id="@obj.Id">Select Winner</a>
+                        }
+                        else{
+                            <a class="btn btn-primary mr-2" >Selected</a>
+                        }
+                    </div>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+

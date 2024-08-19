@@ -1,0 +1,169 @@
+﻿@model WorkBid.Models.Deposite
+
+@{
+    ViewData["Title"] = "Deposit";
+    var depositHistory = ViewBag.DepositHistory as List<WorkBid.Models.Deposite>;
+}
+
+
+<div class="container mt-4">
+    <div class="row mb-3">
+        <div class="col">
+            <h2 class="text-primary text-uppercase">Deposit Funds</h2>
+        </div>
+    </div>
+
+    <div class="mb-4 text-center">
+        <h4 class="text-primary">আপনার অ্যাকাউন্টে ব্যালেন্স যোগ করার পদক্ষেপ:</h4>
+
+        <p>মিনিমাম ডিপোজিট ১০০ টাকা। </p>
+
+        <p>আপনার প্রয়োজনীয় পরিমাণ টাকা পাঠান এই নম্বরে: bKash/Nagad/Rocket: 01611042001 (Personal)</p>
+ 
+        <p>লেনদেন আইডি সংরক্ষণ করুন: লেনদেন সম্পন্ন হওয়ার পর, লেনদেন আইডি সংরক্ষণ করুন।</p>
+        
+        <p>ব্যালেন্স যোগ করার জন্য অনুরোধ করুন: লেনদেন আইডি ব্যবহার করে আপনার অ্যাকাউন্টে ব্যালেন্স যোগ করার জন্য অনুরোধ করুন।</p>
+    </div>
+
+    <div>
+        <p class="text-warning text-center">At first send money from your bkash/nagad/rocket. 01611042001(bkash/nagad/rocket) - personal. Then copy Transection Id and request for add balance to your account.</p>
+    </div>
+
+
+    @if (TempData["SuccessMessage"] != null)
+    {
+        <div class="alert alert-success">
+            @TempData["SuccessMessage"]
+        </div>
+    }
+
+    @if (TempData["ErrorMessage"] != null)
+    {
+        <div class="alert alert-warning">
+            @TempData["ErrorMessage"]
+        </div>
+    }
+
+    <div class="card">
+        <div class="card-body">
+            <form asp-action="Deposit" method="post" id="depositForm">
+                <div class="mb-3">
+                    <label asp-for="DepositeType" class="form-label">Deposit Type</label>
+                    <select asp-for="DepositeType" class="form-select">
+                        <option value="">Select Account Type</option>
+                        <option value="bKash">bKash</option>
+                        <option value="Rocket">Rocket</option>
+                        <option value="Nagad">Nagad</option>
+                        <!-- Add more options as needed -->
+                    </select>
+                    <span asp-validation-for="DepositeType" class="text-danger"></span>
+                </div>
+                <div class="mb-3">
+                    <label asp-for="Amount" class="form-label">Amount</label>
+                    <input asp-for="Amount" class="form-control" type="number" min="1" />
+                    <span asp-validation-for="Amount" class="text-danger"></span>
+                </div>
+                <div class="mb-3">
+                    <label asp-for="TId" class="form-label">Transaction ID</label>
+                    <input asp-for="TId" class="form-control" />
+                    <span asp-validation-for="TId" class="text-danger"></span>
+                </div>
+                <div class="mb-3">
+                    <label asp-for="comment" class="form-label">Comment (optional)</label>
+                    <textarea asp-for="comment" class="form-control"></textarea>
+                </div>
+                @* <button type="submit" class="btn btn-primary">Deposit</button> *@
+                
+                <div class="d-flex justify-content-center">
+                    <button type="submit" class="btn btn-primary position-relative" id="submitButton">
+                        <span id="spinner" class="spinner-border spinner-border-sm d-none position-absolute" role="status" aria-hidden="true"></span>
+                        <span id="buttonText">Submit Deposit Request</span>
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+
+    <div class="mt-5">
+        <div class="row mb-3">
+            <div class="col">
+                <h2 class="text-primary text-uppercase">Deposit History</h2>
+            </div>
+        </div>
+
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>Deposit Type</th>
+                    <th>Amount</th>
+                    <th>Transaction ID</th>
+                    <th>Status</th>
+                    <th>My Comment</th>
+                    <th>Admin Comment</th>
+                </tr>
+            </thead>
+            <tbody>
+                @if (depositHistory != null && depositHistory.Any())
+                {
+                    @foreach (var deposit in depositHistory)
+                    {
+                        <tr>
+                            <td>@deposit.DepositeType</td>
+                            <td>৳@deposit.Amount</td>
+                            <td>@deposit.TId</td>
+                            <td>
+                                @if (deposit.IsStatus && deposit.IsRejected)
+                                {
+                                    <span class="text-danger">Rejected</span>
+                                }
+                                else if (deposit.IsStatus)
+                                {
+                                    <span class="text-success">Approved</span>
+                                }
+                                else
+                                {
+                                    <span class="text-warning">Pending</span>
+                                }
+                            </td>
+                            <td>@deposit.comment</td>
+                            <td>@deposit.Admincomment</td>
+                        </tr>
+                    }
+                }
+                else
+                {
+                    <tr>
+                        <td colspan="6" class="text-center">No deposit history available</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+
+</div>
+
+
+
+@section Scripts {
+    <script>
+        document.getElementById('depositForm').addEventListener('submit', function () {
+            var submitButton = document.getElementById('submitButton');
+            var spinner = document.getElementById('spinner');
+            var buttonText = document.getElementById('buttonText');
+
+            // Show spinner and hide text
+            spinner.style.display = 'inline-block';
+            buttonText.style.display = 'none';
+
+            // Optionally, you can disable the button to prevent multiple submissions
+            submitButton.disabled = true;
+        });
+    </script>
+}
+
+
+
+
+
+

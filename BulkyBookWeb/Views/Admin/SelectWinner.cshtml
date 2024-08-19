@@ -1,0 +1,65 @@
+﻿@model WorkBid.Models.Job
+
+@{
+    ViewData["Title"] = "Select Winner";
+    Layout = "~/Views/Shared/_layoutAdmin.cshtml";
+}
+
+<div>
+    <div class="row pt-4 pb-2">
+        <div class="col-6">
+            <h2 class="text-primary">Category</h2>
+        </div>
+    </div>
+</div>
+
+<div class="container">
+    <div class="card">
+        <div class="card-header">
+            <h4 class="text-center">Select Winner for Job: @Model.JobTitle</h4>
+        </div>
+        <div class="card-body">
+            <h4>Job Description</h4>
+            <p>@Model.JobDescription</p>
+
+            <h4>Applicants</h4>
+                <div class="list-group">
+                    <table class="table table-bordered table table-striped" style="width:100%">
+                        <thead>
+                            <tr>
+                                <th>Id</th>
+                                <th>Name</th>
+                                <th>Total Win</th>
+                                <th>Withdrawal Balance</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var application in Model.Applications)
+                            {
+                                <tr>
+                                    <td width="10%">@application.Member.Id</td>
+                                    <td width="40%">@application.Member.FName @application.Member.LName</td>
+                                    <td width="15%">@application.Member.TotalWin</td>
+                                    <td width="15%">@application.Member.WithdrawalBalance</td>
+                                    <td width="20%">
+                                        <form asp-action="winnerSelect" method="post">
+                                            <input type="hidden" name="Id" value="@Model.Id" />
+                                            <input type="hidden" name="wId" value="@application.Member.Id" />
+                                            <button type="submit" class="list-group-item bg-warning list-group-item-action d-flex justify-content-between align-items-center">
+                                                <span>Select as Winner</span>
+                                            </button>
+                                        </form>
+
+                                    </td>
+
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+
+
+                </div>
+        </div>
+    </div>
+</div>

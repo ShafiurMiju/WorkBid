@@ -1,0 +1,80 @@
+﻿@using WorkBid.Models
+@model IEnumerable<Bid>
+
+@{
+    ViewData["Title"] = "Bid Packages";
+}
+
+<div class="container mt-4">
+    <div class="row mb-3">
+        <div class="col">
+            <h2 class="text-primary text-uppercase">Bid Packages</h2>
+        </div>
+    </div>
+
+    <div id="message-container"></div>
+
+    <div class="table-responsive">
+        <table class="table table-bordered table-striped text-center">
+            <thead class="thead-dark">
+                <tr>
+                    <th>Number of Bids</th>
+                    <th>Price</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var obj in Model)
+                {
+                    <tr>
+                        <td>@obj.Bids</td>
+                        <td>৳@obj.Price</td>
+                        <td>
+                            <button class="btn btn-primary buy-button" data-id="@obj.Id">
+                                <span class="spinner-border spinner-border-sm d-none" role="status" aria-hidden="true"></span>
+                                Buy
+                            </button>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<script src="~/lib/jquery/dist/jquery.min.js"></script>
+<script>
+    $(document).ready(function () {
+        $(".buy-button").click(function () {
+            var button = $(this);
+            var spinner = button.find(".spinner-border");
+            var id = button.data("id");
+
+            button.prop("disabled", true); // Disable the button
+            spinner.removeClass("d-none"); // Show spinner
+            button.contents().filter(function () { return this.nodeType == 3; }).remove(); // Hide "Buy" text
+
+            $.ajax({
+                url: '/BidPack/Buy',
+                type: 'POST',
+                data: { id: id },
+                success: function (result) {
+                    if (result.success) {
+                        $("#message-container").html('<div class="alert alert-success">' + result.message + '</div>');
+                    } else {
+                        $("#message-container").html('<div class="alert alert-warning">' + result.message + '</div>');
+                    }
+                    button.prop("disabled", false); // Re-enable the button
+                    spinner.addClass("d-none"); // Hide spinner
+                    button.append(" Buy"); // Restore "Buy" text
+                },
+                error: function () {
+                    $("#message-container").html('<div class="alert alert-danger">An error occurred. Please try again.</div>');
+                    button.prop("disabled", false);
+                    spinner.addClass("d-none");
+                    button.append(" Buy");
+                }
+            });
+        });
+    });
+</script>

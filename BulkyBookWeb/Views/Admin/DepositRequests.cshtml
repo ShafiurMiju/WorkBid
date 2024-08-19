@@ -1,0 +1,60 @@
+﻿
+@model IEnumerable<WorkBid.Models.Deposite>
+
+@{
+    ViewData["Title"] = "Deposit Requests";
+    Layout = "~/Views/Shared/_LayoutAdmin.cshtml";
+}
+
+<div class="container mt-4">
+    <h2>Pending Deposit Requests</h2>
+    @if (TempData["SuccessMessage"] != null)
+    {
+        <div class="alert alert-success">
+            @TempData["SuccessMessage"]
+        </div>
+    }
+
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Member Name</th>
+                <th>Deposit Type</th>
+                <th>Amount</th>
+                <th>Transaction ID</th>
+                <th>member Comment</th>
+                <th>Approve</th>
+                <th>Reject</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var deposit in Model)
+            {
+                <tr>
+                    <td width="5%">@deposit.Member.Id</td>
+                    <td width="15%">@deposit.Member.FName @deposit.Member.LName</td>
+                    <td width="10%">@deposit.DepositeType</td>
+                    <td width="5%">৳@deposit.Amount</td>
+                    <td width="10%">@deposit.TId</td>
+                    <td width="20%">@deposit.comment</td>
+                    <td width="5%">
+                        <form asp-action="ApproveDeposit" method="post" style="display:inline;">
+                            <input type="hidden" name="id" value="@deposit.Id" />
+                            <button type="submit" class="btn btn-success">Approve</button>
+                        </form>
+                    </td>
+                    <td width="30%">
+                        <form asp-action="RejectDeposit" method="post" style="display:inline;">
+                            <input type="hidden" name="id" value="@deposit.Id" />
+                            <input type="text" name="Admincomment" class="form-control-sm" placeholder="Admin Comment" />
+                            <button type="submit" class="btn btn-danger">Reject</button>
+                        </form>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+
+

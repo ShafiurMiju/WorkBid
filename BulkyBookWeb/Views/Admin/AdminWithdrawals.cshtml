@@ -1,0 +1,79 @@
+﻿@model IEnumerable<WorkBid.Models.Withdraw>
+
+@{
+    ViewData["Title"] = "AdminWithdrawals";
+    Layout = "~/Views/Shared/_LayoutAdmin.cshtml";
+    var withdrawNumber = ViewBag.withdrawNumber as List<WorkBid.Models.Wallet>;
+}
+
+<div class="container">
+    <h2 class="text-primary">Manage Withdrawals</h2>
+
+    <div class="card">
+        <div class="card-body">
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th>Id</th>
+                        <th>Type</th>
+                        <th>Number</th>
+                        <th>Amount</th>
+                        <th>Status</th>
+                        <th>Comment</th>
+                        <th>Admin</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var withdraw in Model)
+                    {
+                        <tr>
+                            <td>@withdraw.Member.Id</td>
+                            <td>@withdraw.WithdrawType</td>
+                            <td>
+                                @foreach (var type in withdrawNumber)
+                                {
+                                    if (type.WalletName == withdraw.WithdrawType && type.mId == withdraw.Member.Id)
+                                    {
+                                        @type.WalletNumber
+                                    }
+
+                                }
+                            </td>
+                            <td>৳@withdraw.Amount</td>
+                            <td>
+                                @if (withdraw.IsStatus)
+                                {
+                                    <span class="text-success">Approved</span>
+                                }
+                                else if (withdraw.IsRejected)
+                                {
+                                    <span class="text-danger">Rejected</span>
+                                }
+                                else
+                                {
+                                    <span class="text-warning">Pending</span>
+                                }
+                            </td>
+                            <td>@withdraw.Comment</td>
+                            <td>@withdraw.AdminComment</td>
+                            <td>
+                                @if (!withdraw.IsStatus && !withdraw.IsRejected)
+                                {
+                                    <form asp-action="ProcessWithdraw" method="post" class="d-inline">
+                                        <input type="hidden" name="id" value="@withdraw.Id" />
+                                        <input type="text" name="TId" class="form-control-sm w-25" placeholder="Transaction Id" />
+                                        <button type="submit" name="approve" value="true" class="btn btn-success btn-sm">Approve</button>
+                                        <input type="text" name="AdminComment" class="form-control-sm w-25" placeholder="Admin Comment" />
+                                        <button type="submit" name="approve" value="false" class="btn btn-danger btn-sm">Reject</button>
+                                    </form>
+                                }
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+

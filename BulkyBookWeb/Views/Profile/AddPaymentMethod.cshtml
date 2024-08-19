@@ -1,0 +1,34 @@
+﻿@using WorkBid.Models
+@model Wallet
+
+<div class="card bg-dark text-white mt-3">
+    <div class="card-body">
+        <form method="post">
+            <div class="mb-3">
+                <label asp-for="WalletName" class="form-label"></label>
+                <select asp-for="WalletName" class="form-select bg-dark text-white">
+                    <option value="">Select Account Type</option>
+                    <option value="bKash">bKash</option>
+                    <option value="Nagad">Nagad</option>
+                    <option value="Rocket">Rocket</option>
+                </select>
+                <span asp-validation-for="WalletName" class="text-danger"></span>
+            </div>
+            <div class="mb-3">
+                <label asp-for="WalletNumber" class="form-label"></label>
+                <input asp-for="WalletNumber" class="form-control bg-dark text-white" placeholder="Account Number">
+                <span asp-validation-for="WalletNumber" class="text-danger"></span>
+            </div>
+            <div class="d-grid">
+                <button type="submit" class="btn btn-primary btn-lg">Save</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+
+@section Scripts {
+    @{
+        <partial name="_ValidationScriptsPartial" />
+    }
+}

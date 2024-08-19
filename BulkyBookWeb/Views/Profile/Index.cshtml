@@ -1,0 +1,31 @@
+﻿@using WorkBid.Models
+@model Member
+
+@{
+    ViewData["Title"] = "Profile";
+}
+
+<div class="container mt-5">
+    <div class="card bg-dark text-white">
+        <div class="card-body">
+            <div class="row align-items-center justify-content-center card-header">
+                <div class="col-5 col-md-4 col-lg-3 col-xl-2 text-center">
+                    <img src="user.png" class="rounded-circle img-fluid" alt="Profile Picture" />
+                </div>
+                <div class="col-md-5 text-center text-md-start py-4">
+                    <h4 class="pb-2">@Model.FName @Model.LName</h4>
+                    <p>Account ID: @Model.Id</p>
+                    <p>Balance: <span class="text-success">৳@Model.Balance</span></p>
+                    <p>Withdrawal Balance: <span class="text-success">৳@Model.WithdrawalBalance</span></p>
+                    <p>Bids: <span class="text-success">@Model.Bids</span></p>
+                </div>
+            </div>
+
+            <div class="text-center mt-4">
+                <a asp-area="" asp-controller="Profile" asp-action="deposit" class="btn btn-primary btn-lg me-4">Deposit</a>
+                <a asp-area="" asp-controller="Profile" asp-action="withdraw" class="btn btn-success btn-lg">Withdraw</a>
+            </div>
+        </div>
+    </div>
+</div>
+

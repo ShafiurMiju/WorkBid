@@ -1,0 +1,138 @@
+﻿@model WorkBid.Models.Withdraw
+
+@{
+    ViewData["Title"] = "Withdraw";
+    var withdrawHistory = ViewBag.WithdrawHistory as List<WorkBid.Models.Withdraw>;
+}
+
+<div class="container mt-4">
+    <div>
+        <div class="row pt-4 pb-2">
+            <div class="col-6">
+                <h2 class="text-primary text-uppercase">Withdraw</h2>
+            </div>
+        </div>
+    </div>
+
+    @if (TempData["SuccessMessage"] != null)
+    {
+        <div class="alert alert-success">
+            @TempData["SuccessMessage"]
+        </div>
+    }
+
+    @if (TempData["ErrorMessage"] != null)
+    {
+        <div class="alert alert-warning">
+            @TempData["ErrorMessage"]
+        </div>
+    }
+
+    <div class="card">
+        <div class="card-body">
+            <form asp-action="Withdraw" method="post" id="withdrawForm">
+                <div class="mb-3">
+                    <label asp-for="WithdrawType" class="form-label">Withdraw Type</label>
+                    <select asp-for="WithdrawType" class="form-select">
+                        <option value="">Select Account Type</option>
+                        <option value="bKash">bKash</option>
+                        <option value="Rocket">Rocket</option>
+                        <option value="Nagad">Nagad</option>
+                    </select>
+                    <span asp-validation-for="WithdrawType" class="text-danger"></span>
+                </div>
+                <div class="mb-3">
+                    <label asp-for="Amount" class="form-label">Amount (minimum ৳1000)</label>
+                    <input asp-for="Amount" class="form-control" type="number" min="1000" />
+                    <span asp-validation-for="Amount" class="text-danger"></span>
+                </div>
+                <div class="mb-3">
+                    <label asp-for="Comment" class="form-label">Comment (optional)</label>
+                    <textarea asp-for="Comment" class="form-control"></textarea>
+                </div>
+                <div class="d-flex justify-content-center">
+                    <button type="submit" class="btn btn-primary position-relative" id="submitButton">
+                        <span id="spinner" class="spinner-border spinner-border-sm d-none position-absolute" role="status" aria-hidden="true"></span>
+                        <span id="buttonText">Submit Withdraw Request</span>
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div class="mt-5">
+        <div class="row mb-3">
+            <div class="col">
+                <h2 class="text-primary text-uppercase">Withdraw History</h2>
+            </div>
+        </div>
+        <div class="table-responsive">
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th>Date</th>
+                        <th>Withdraw Type</th>
+                        <th>Amount</th>
+                        <th>Transaction ID</th>
+                        <th>Status</th>
+                        <th>Admin Comment</th>
+                        <th>User Comment</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (withdrawHistory != null && withdrawHistory.Any())
+                    {
+                        @foreach (var withdraw in withdrawHistory)
+                        {
+                            <tr>
+                                <td>@withdraw.CreatedDateTime.ToString("yyyy-MM-dd HH:mm:ss")</td>
+                                <td>@withdraw.WithdrawType</td>
+                                <td>৳@withdraw.Amount</td>
+                                <td>@withdraw.TId</td>
+                                <td>
+                                    @if (withdraw.IsStatus)
+                                    {
+                                        <span class="text-success">Approved</span>
+                                    }
+                                    else if (withdraw.IsRejected)
+                                    {
+                                        <span class="text-danger">Rejected</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="text-warning">Pending</span>
+                                    }
+                                </td>
+                                <td>@withdraw.AdminComment</td>
+                                <td>@withdraw.Comment</td>
+                            </tr>
+                        }
+                    }
+                    else
+                    {
+                        <tr>
+                            <td colspan="7" class="text-center">No withdraw history available</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        document.getElementById('withdrawForm').addEventListener('submit', function () {
+            var submitButton = document.getElementById('submitButton');
+            var spinner = document.getElementById('spinner');
+            var buttonText = document.getElementById('buttonText');
+
+            // Show spinner and hide text
+            spinner.style.display = 'inline-block';
+            buttonText.style.display = 'none';
+
+            // Optionally, you can disable the button to prevent multiple submissions
+            submitButton.disabled = true;
+        });
+    </script>
+}
